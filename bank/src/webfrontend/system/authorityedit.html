@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>华融湘江银行</title>
+    <link rel="shortcut icon" href="../images/huaxia.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../static/h-ui/css/H-ui.min.css">
+    <link rel="stylesheet" href="../static/h-ui.admin/css/H-ui.admin.css">
+    <link rel="stylesheet" href="../static/Hui-iconfont/1.0.8/iconfont.css">
+    <link rel="stylesheet" href="../static/h-ui.admin/skin/default/skin.css" id="skin">
+    <link rel="stylesheet" href="../static/h-ui.admin/css/style.css">
+</head>
+<body>
+<div class="mt-20">
+    <form  method="post" class="form form-horizontal" name="form">
+        <div class="row cl">
+            <label for="userId" class="form-label col-xs-4 col-ms-3"
+                   style="padding-left: 8px;">
+                <span class="c-red">*</span>&nbsp;状态:
+            </label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="hidden" id="userId">
+                <!--  系统管理员：
+        <input type="checkbox" name="Bike">-->&nbsp;系统管理员:
+                <input type="checkbox"  name="chk" value="1">&nbsp;
+                经理:
+                <input type="checkbox"  name="chk" value="2">&nbsp;
+                办事员:
+                <input type="checkbox"  name="chk" value="3">&nbsp;
+                <!--  经理：
+                  <input type="checkbox" name="Car">
+                  办事员：
+                  <input type="checkbox" name="Car">--><br>
+                <input type="button" value="保存" class="btn btn-secondary-outline radius" id="baocun">
+                <!--<button type="button" id="baocun" class="btn btn-secondary-outline radius">保存</button>-->
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="../js/jquery-3.3.1.min.js"></script>
+<script src="../js/jquery.dataTables.min.js"></script>
+<script src="../static/h-ui/js/H-ui.min.js"></script>
+<script src="../static/h-ui.admin/js/H-ui.admin.js"></script>
+<script src="../static/layer/2.4/layer.js"></script>
+<script src="../static/layer/laypage.js"></script>
+<script src="../js/bank.js"></script>
+<script>
+    $(window).on('load', () => {
+        // 获取传过来的 ID
+        var userId = localStorage.getItem("userId")
+        // 把 ID 放入 表格中
+        $("#userId").val(userId)
+        // 删除 传过来的 ID
+        localStorage.removeItem("userId")
+
+        // 保存
+        $("#baocun").click(() => {
+            console.log(11111)
+            //获取所有name为chk的多选框,返回一个多选框数组
+            var chks = document.form.chk;
+            //console.log(chks)
+
+            //把选中的多选框的值拼接成字符串
+            var str = "";
+
+            //循环多选框数组
+           for (var i = 0; i < chks.length; i++) {
+                //如果多选框被选中，则把值累计到str中
+                if (chks[i].checked == true) {
+                    str += chks[i].value + ",";
+                }
+            }
+
+            //弹出多选框选中的结果
+            console.log("你勾选的值是：" + str)
+
+            var date ={
+               userId: $("#userId").val(),
+               authorityId :str,
+            }
+            console.log(date)
+
+            $.ajax({
+                url : BANK_URL+"UserAuthority",
+                type : "post",
+                data : date,
+                headers : createAuthorizationTokenHeader(),
+                dataType : "json",
+                success : function (data) {
+                    console.log(data)
+                    if(data){
+                        layer.msg("授权成功！",{icon:1,time:1000})
+                        var index = parent.layer.getFrameIndex(window.name)
+                        setTimeout(()=>{
+                            window.parent.location.reload()
+                            parent.layer.close(index)
+                        },800)
+                    }
+                }
+            })
+
+        })
+    })
+
+</script>
+</body>
+</html>

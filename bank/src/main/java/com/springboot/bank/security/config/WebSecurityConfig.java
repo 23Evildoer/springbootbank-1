@@ -53,6 +53,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .passwordEncoder(passwordEncoderBean());
   }
 
+  /**
+   *  密码解析器
+   * @return
+   */
   @Bean
   public PasswordEncoder passwordEncoderBean() {
     return new BCryptPasswordEncoder();

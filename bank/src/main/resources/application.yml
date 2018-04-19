@@ -27,6 +27,7 @@ jwt:
   secret: mySecret
 # token
   expiration: 604800
+  tokenHead: Bearer
   route:
     authentication:
       path: /auth
